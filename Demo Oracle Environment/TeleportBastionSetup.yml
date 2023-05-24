@@ -1,0 +1,11 @@
+---
+- name: Teleport Install
+  hosts: oracle-teleport
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Starts Teleport as Bastion Host Server #see https://goteleport.com/docs/server-access/getting-started/
+      ansible.builtin.shell: teleport start -roles=proxy
+      args:
+        executable: /bin/bash    

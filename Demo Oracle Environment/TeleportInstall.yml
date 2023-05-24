@@ -1,0 +1,32 @@
+---
+- name: Teleport Install
+  hosts: oracle-teleport
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Get Teleports PGP Public Key and Source Variables about OS Version #see https://goteleport.com/docs/installation/
+      block:
+         - name: Install Teleports PGP Public Key
+           ansible.builtin.get_url:
+             url: https://apt.releases.teleport.dev/gpg
+             dest: /usr/share/keyrings/teleport-archive-keyring.asc
+
+         - name: Set Source for OS-Release for next command
+           ansible.builtin.shell: source /etc/os-release
+           args:
+             executable: /bin/bash    
+
+         - name: Teleport Repository for Current Version Piped to sources
+           ansible.builtin.shell: echo "deb [signed-by=/usr/share/keyrings/teleport-archive-keyring.asc] https://apt.releases.teleport.dev/${ID?} ${VERSION_CODENAME?} stable/v13" | sudo tee /etc/apt/sources.list.d/teleport.list > /dev/null
+           args:
+             executable: /bin/bash 
+    
+    - name: Update Ubuntu Repository now that Teleport is added
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Ansible apt install Teleport
+      apt:
+        name: teleport
+        state: present

@@ -1,0 +1,3 @@
+DockerPortainerNginx.yml is a playbook that installs Docker, DockerCE and Portainer (plus updates Ubuntu and installs dependancies) and Nginx Proxy Manager on an ARM instance (adjust accordingly for AMD instance)
+
+This sets up a barebones NPM Reverse Proxy onto Docker, assuming you have port 80/443 pointing to your device. Initial set up will need to be made accordingly after install to allow access to Portainer from NPM. From there you can set up NPM to allow backend access through your reverse proxy to all of your Docker(ized) applications.

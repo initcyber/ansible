@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: oracle-all
   gather_facts: yes
   become: yes
 
