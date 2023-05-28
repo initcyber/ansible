@@ -1,5 +1,5 @@
 ---
-- hosts: oracle-all
+- hosts: pihole-dns
   become: true
   roles:
     - role: claranet.motd
