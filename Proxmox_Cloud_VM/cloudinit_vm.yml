@@ -1,0 +1,78 @@
+---
+- name: Create VM Templates for Ubuntu 24.04 (Latest)
+  hosts: discovery
+  tasks:
+  # Check to see if cloud-img already exists in directory
+    - name: Check to see if cloud-img exists
+      stat:
+        path: /home/noble-server-cloudimg-amd64.img
+      register: cloudimg
+    - debug:
+        msg: "/home/noble-server-cloudimg-amd64.img already exists!"
+    - debug:
+        msg: "File not found, downloading now:"
+  # Download latest/current Ubuntu 24.04
+    - name: Download Cloud-Init image (If it doesn't exist)
+      ansible.builtin.shell:
+        cmd: cd /home && wget https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+      when: not cloudimg.stat.exists
+  # Create VM and capture shell command output
+    - name: Create new VM
+      ansible.builtin.shell: # noqa: command-instead-of-shell
+        cmd: qm create 9999 --memory 1024 --core 2 --cpu host --name ubuntu-cloud --net0 virtio,bridge=vmbr0
+      register: vmcreate_result
+      changed_when: "'unable' not in vmcreate_result.stderr"
+  # Show shell command output for vmcreate error check
+    - name: Debug Create new VM shell output
+      ansible.builtin.debug:
+        var: vmcreate_result
+  # Import Disk and capture shell command output
+    - name: Import Disk
+      ansible.builtin.shell: # noqa: command-instead-of-shell
+        cmd: qm importdisk 9999 /home/noble-server-cloudimg-amd64.img local-zfs
+      register: importdisk_result
+      changed_when: "'Successfully' in importdisk_result.stdout"
+  # Show shell command output for importdisk error check
+    - name: Debug Import Disk shell output
+      ansible.builtin.debug:
+        var: importdisk_result
+  # Attach Imported Disk and capture shell command output
+    - name: Attach Imported Disk # noqa: command-instead-of-shell
+      ansible.builtin.shell:
+        cmd: qm set 9999 --scsihw virtio-scsi-single  --scsi0 local-zfs:vm-9999-disk-0,iothread=1
+      register: attachdisk_result
+      changed_when: "'update' in attachdisk_result.stdout"
+  # Show shell command output for importdisk error check
+    - name: Debug Attach Imported Disk shell output
+      ansible.builtin.debug:
+        var: attachdisk_result
+# Attach cloudinit Disk and capture shell command output
+    - name: Add cloudinit disk # noqa: command-instead-of-shell
+      ansible.builtin.shell:
+        cmd: qm set 9999 --ide2 local-zfs:cloudinit
+      register: attachcloudinit_result
+      changed_when: "'update' in attachcloudinit_result.stdout"
+  # Show shell command output for Attach cloudinit Disk error check
+    - name: Debug Attach cloudinit Disk shell output
+      ansible.builtin.debug:
+        var: attachcloudinit_result
+# Make cloudinit disk bootable and capture shell command output
+    - name: Make cloudinit disk bootable # noqa: command-instead-of-shell
+      ansible.builtin.shell:
+        cmd: qm set 9999 --boot c --bootdisk scsi0
+      register: bootcloudinit_result
+      changed_when: "'update' in bootcloudinit_result.stdout"
+# Show shell command output for Make cloudinit disk bootable error check
+    - name: Debug Make cloudinit disk bootable output
+      ansible.builtin.debug:
+        var: bootcloudinit_result
+# Create template and capture shell command output
+    - name: Create Template  # noqa: command-instead-of-shell
+      ansible.builtin.shell:
+        cmd: qm template 9999
+      register: templatecreate_result
+      changed_when: true
+# Show shell command output for Make cloudinit disk bootable error check
+    - name: Debug Create Template output
+      ansible.builtin.debug:
+        var: templatecreate_result
