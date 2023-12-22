@@ -4,7 +4,7 @@
   gather_facts: false
   become: true
   vars:
-    user: justin
+    user: #ChangeUserName
   tasks:
   - name: SSH Key Deployment
     ansible.posix.authorized_key:
