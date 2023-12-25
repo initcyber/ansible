@@ -66,6 +66,26 @@
     - name: Debug Make cloudinit disk bootable output
       ansible.builtin.debug:
         var: bootcloudinit_result
+# Attach VGA Display to Cloud-Init Image (for Debugging Purposes)
+    - name: Attach VGA Display
+      ansible.builtin.shell:
+        cmd: qm set 9999 --serial0 socket --vga serial0
+      register: attachvgadisplay_result
+      changed_when: "'update' in attachvgadisplay_result.stdout"
+# Show shell command output for Attach VGA Display to Cloud-Init Image error check
+    - name: Debug Attached VGA Display to Cloud-Init Image
+      ansible.builtin.debug:
+        var: attachvgadisplay_result
+# Enable QEMU Agent
+    - name: Enable QEMU Agent
+      ansible.builtin.shell:
+        cmd: qm set 9999 --agent enabled=1
+      register: enableqemuagent_result
+      changed_when: "'update' in enableqemuagent_result.stdout"
+# Show shell command output for Attach VGA Display to Cloud-Init Image error check
+    - name: Debug Enable QEMU Agent
+      ansible.builtin.debug:
+        var: enableqemuagent_result
 # Create template and capture shell command output
     - name: Create Template  
       ansible.builtin.shell:
