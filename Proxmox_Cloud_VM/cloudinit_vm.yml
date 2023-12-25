@@ -26,9 +26,13 @@
         name: libguestfs-tools
         state: present
   # Inject Qemu-Guest-Agent in Downloaded Cloud-Init Image and capture shell command output
-    - name: Inject Qemu-Guest-Agent
-      ansible.builtin.shell: 
-        cmd: virt-customize -a /home/noble-server-cloudimg-amd64.img --install qemu-guest-agent
+    - name: Inject Qemu-Guest-Agent and SSH Key
+      ansible.builtin.shell: |
+        virt-customize -a /home/noble-server-cloudimg-amd64.img --install qemu-guest-agent
+        virt-customize -a /home/noble-server-cloudimg-amd64.img --run-command 'useradd justin'
+        virt-customize -a /home/noble-server-cloudimg-amd64.img --run-command 'mkdir -p /home/justin/.ssh'
+        virt-customize -a /home/noble-server-cloudimg-amd64.img --ssh-inject justin:file:/root/.ssh/id_rsa.pub
+        virt-customize -a /home/noble-server-cloudimg-amd64.img --run-command 'chown -R justin:justin /home/justin'
       register: qemuinject_result
       changed_when: "'Finishing' in qemuinject_result.stderr"
   # Show shell command output for vmcreate error check
