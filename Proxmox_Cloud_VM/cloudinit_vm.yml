@@ -1,6 +1,6 @@
 ---
 - name: Create VM Templates for Ubuntu 24.04 (Latest)
-  hosts: discovery
+  hosts: all
   tasks:
   # Check to see if cloud-img already exists in directory
     - name: Check to see if cloud-img exists
@@ -18,7 +18,7 @@
       when: not cloudimg.stat.exists
   # Create VM and capture shell command output
     - name: Create new VM
-      ansible.builtin.shell: # noqa: command-instead-of-shell
+      ansible.builtin.shell: 
         cmd: qm create 9999 --memory 1024 --core 2 --cpu host --name ubuntu-cloud --net0 virtio,bridge=vmbr0
       register: vmcreate_result
       changed_when: "'unable' not in vmcreate_result.stderr"
@@ -28,7 +28,7 @@
         var: vmcreate_result
   # Import Disk and capture shell command output
     - name: Import Disk
-      ansible.builtin.shell: # noqa: command-instead-of-shell
+      ansible.builtin.shell: 
         cmd: qm importdisk 9999 /home/noble-server-cloudimg-amd64.img local-zfs
       register: importdisk_result
       changed_when: "'Successfully' in importdisk_result.stdout"
@@ -37,7 +37,7 @@
       ansible.builtin.debug:
         var: importdisk_result
   # Attach Imported Disk and capture shell command output
-    - name: Attach Imported Disk # noqa: command-instead-of-shell
+    - name: Attach Imported Disk 
       ansible.builtin.shell:
         cmd: qm set 9999 --scsihw virtio-scsi-single  --scsi0 local-zfs:vm-9999-disk-0,iothread=1
       register: attachdisk_result
@@ -47,7 +47,7 @@
       ansible.builtin.debug:
         var: attachdisk_result
 # Attach cloudinit Disk and capture shell command output
-    - name: Add cloudinit disk # noqa: command-instead-of-shell
+    - name: Add cloudinit disk 
       ansible.builtin.shell:
         cmd: qm set 9999 --ide2 local-zfs:cloudinit
       register: attachcloudinit_result
@@ -57,7 +57,7 @@
       ansible.builtin.debug:
         var: attachcloudinit_result
 # Make cloudinit disk bootable and capture shell command output
-    - name: Make cloudinit disk bootable # noqa: command-instead-of-shell
+    - name: Make cloudinit disk bootable 
       ansible.builtin.shell:
         cmd: qm set 9999 --boot c --bootdisk scsi0
       register: bootcloudinit_result
@@ -67,7 +67,7 @@
       ansible.builtin.debug:
         var: bootcloudinit_result
 # Create template and capture shell command output
-    - name: Create Template  # noqa: command-instead-of-shell
+    - name: Create Template  
       ansible.builtin.shell:
         cmd: qm template 9999
       register: templatecreate_result
