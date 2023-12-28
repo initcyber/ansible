@@ -62,23 +62,13 @@
   # Attach Imported Disk and capture shell command output
     - name: Attach Imported Disk 
       ansible.builtin.shell:
-        cmd: qm set 9999 --scsihw virtio-scsi-single  --scsi0 local-zfs:vm-9999-disk-0,iothread=1
+        cmd: qm set 9999 --scsihw virtio-scsi-single  --scsi0 local-zfs:vm-9999-disk-0
       register: attachdisk_result
       changed_when: "'update' in attachdisk_result.stdout"
   # Show shell command output for importdisk error check
     - name: Debug Attach Imported Disk shell output
       ansible.builtin.debug:
         var: attachdisk_result
-# Attach cloudinit Disk and capture shell command output
-    - name: Add cloudinit disk 
-      ansible.builtin.shell:
-        cmd: qm set 9999 --ide2 local-zfs:cloudinit
-      register: attachcloudinit_result
-      changed_when: "'update' in attachcloudinit_result.stdout"
-  # Show shell command output for Attach cloudinit Disk error check
-    - name: Debug Attach cloudinit Disk shell output
-      ansible.builtin.debug:
-        var: attachcloudinit_result
 # Make cloudinit disk bootable and capture shell command output
     - name: Make cloudinit disk bootable 
       ansible.builtin.shell:
@@ -89,6 +79,16 @@
     - name: Debug Make cloudinit disk bootable output
       ansible.builtin.debug:
         var: bootcloudinit_result
+# Attach cloudinit Disk and capture shell command output
+    - name: Add cloudinit disk 
+      ansible.builtin.shell:
+        cmd: qm set 9999 --ide2 local-zfs:cloudinit
+      register: attachcloudinit_result
+      changed_when: "'update' in attachcloudinit_result.stdout"
+  # Show shell command output for Attach cloudinit Disk error check
+    - name: Debug Attach cloudinit Disk shell output
+      ansible.builtin.debug:
+        var: attachcloudinit_result
 # Attach VGA Display to Cloud-Init Image (for Debugging Purposes) and capture shell command output
     - name: Attach VGA Display
       ansible.builtin.shell:
