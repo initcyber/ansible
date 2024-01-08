@@ -1,0 +1,14 @@
+---
+# ansible-galaxy role install Oefenweb.fail2ban
+# https://github.com/Oefenweb/ansible-fail2ban
+- hosts: bastion
+  become: yes
+  roles:
+    - Oefenweb.fail2ban
+  vars:
+    fail2ban_services:
+      # In older versions of Fail2Ban this is called ssh
+      - name: sshd
+        port: 22
+        maxretry: 5
+        bantime: -1

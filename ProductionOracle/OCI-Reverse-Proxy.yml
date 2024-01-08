@@ -1,4 +1,6 @@
-- hosts: oracle-docker-demo
+---
+# Install Docker and Docker CE into the OCI Free Tier AMD64 (1cpu / 1 gb) VM
+- hosts: proxy
   become: yes
   vars:
     docker_compose_version: "v2.18.1"
@@ -21,9 +23,7 @@
           - ca-certificates
           - curl
           - software-properties-common
-          - python3-pip
-          - virtualenv
-          - python3-setuptools
+
 
     # DOCKER INSTALLATION
     - name: Add an apt signing key for Docker
@@ -34,7 +34,7 @@
       #Change arch=***** to amd64 for x86 or arm64 for arm based (pi or arm processors)
     - name: Add apt repository for stable version
       apt_repository:
-        repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu jammy stable
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable
         state: present
 
     - name: Install Docker
@@ -56,7 +56,7 @@
     #Change URL to current URL and "-armv7" to "x86_64"  as needed
     - name: Download docker-compose {{ docker_compose_version }}
       get_url:
-        url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-linux-armv7
+        url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-linux-x86_64
         dest: ~/docker-compose
         mode: "+x"
 
@@ -83,19 +83,21 @@
         name: docker
 
     # https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html#ansible-collections-community-docker-docker-container-module
-    - name: Create portainer container
+    - name: Create nginx container
       docker_container:
-        name: portainer
-        image: portainer/portainer-ce
+        name: npm
+        image: jc21/nginx-proxy-manager:latest
         state: started
         recreate: yes
-        restart_policy: always
+        restart_policy: unless-stopped
         published_ports:
-          - "8000:8000"
-          - "9000:9000"
+          - "80:80" #http
+          - "443:443" #https
+          - "81:81" #admin port
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
-          - portainer_data:/data
+          - npm_le:/etc/letsencrypt
+          - npm_data:/data
 
 
     # FIREWALL SETUP - If Needed - Commented out for now
