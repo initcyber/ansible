@@ -1,0 +1,11 @@
+  - name: vmtest1
+    vmid: 1000
+    node: discovery
+    image_file: jammy-server-cloudimg-amd64.img
+    cores: 1
+    memory: 1024
+    vlan: 1
+    ipv4mode: static
+    ipv4_address: 192.168.102.40/24
+    ipv4_gateway: 192.168.102.254
+    state: new  #absent could be used to delete the vm

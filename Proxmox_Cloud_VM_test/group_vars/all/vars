@@ -1,0 +1,10 @@
+ansible_key_file: '~/.ssh/ansible-key.pub'
+project_path: '~/github/Ansible/Proxmox_Cloud_VM_test/'
+image_path: '/var/lib/vz/images/0/'
+domain_name: 'home.initcyber.com'
+timezone: 'America/New_York'
+locale: 'en_US.UTF-8'
+group_name: pvenodes
+variable_files:
+ - images
+ - vms

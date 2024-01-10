@@ -1,0 +1,11 @@
+os_images:
+  - name: Ubuntu-2204-image
+    cloud_init_file: jammy-server-cloudimg-amd64.img 
+    image_url: 'https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img'
+    #image_checksum: sha512:12345abcdef
+    state: present
+  - name: Ubuntu-2204-image
+    cloud_init_file: noble-server-cloudimg-amd64.img
+    image_url: 'https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img'
+    #image_checksum: sha512:12345abcdef
+    state: present

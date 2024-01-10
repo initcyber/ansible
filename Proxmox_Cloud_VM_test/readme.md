@@ -1,0 +1,1 @@
+Following https://www.techtutorials.tv/sections/promox/automate-vm-creation-on-proxmox-with-ansible/
