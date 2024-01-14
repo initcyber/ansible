@@ -33,6 +33,7 @@
         virt-customize -a /home/jammy-server-cloudimg-amd64.img --run-command 'mkdir -p /home/justin/.ssh'
         virt-customize -a /home/jammy-server-cloudimg-amd64.img --ssh-inject justin:file:/root/.ssh/id_rsa.pub
         virt-customize -a /home/jammy-server-cloudimg-amd64.img --run-command 'chown -R justin:justin /home/justin'
+        virt-customize -a /home/jammy-server-cloudimg-amd64.img --run-command 'chsh -s /bin/bash'
       register: qemuinject_result
       changed_when: "'Finishing' in qemuinject_result.stderr"
   # Show shell command output for vmcreate error check
