@@ -81,21 +81,20 @@
     - name: Install python packages
       pip:
         name: docker
+# https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html#ansible-collections-community-docker-docker-container-module
 
-    # https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html#ansible-collections-community-docker-docker-container-module
-    - name: Create Uptime Kuma Container
-      docker_container:
-        name: uptime-kuma
-        image: louislam/uptime-kuma:1
-        state: started
-        recreate: yes
-        restart_policy: unless-stopped
-        published_ports:
-          - "3001:3001"
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock
-          - uptime-kuma:/app/data
-
+#    - name: Uptime Kuma
+#      docker_container:
+#        name: uptime-kuma
+#        image: louislam/uptime-kuma:1
+#        state: started
+#        recreate: yes
+#        restart_policy: unless-stopped
+#        published_ports:
+#          - "3001:3001"
+#        volumes:
+#          - /var/run/docker.sock:/var/run/docker.sock
+#          - uptime-kuma:/app/data
 
     # FIREWALL SETUP - If Needed - Commented out for now
     #- name: Open Portainer port
