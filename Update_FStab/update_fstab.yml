@@ -1,0 +1,13 @@
+---
+- hosts: #fill in
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Mount ephemeral SMB volume
+      ansible.posix.mount:
+        src: //enter/remote/share/here
+        path: /mnt/smb_share #Adjust to path
+        opts: "users,uid=1000,gid=1000,credentials=/INSERT/PATH/HERE/.credentials 0 0"
+        fstype: cifs
+        state: mounted
